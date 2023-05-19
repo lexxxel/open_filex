@@ -4,7 +4,6 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:open_file/src/common/open_result.dart';
-import 'windows.dart' as windows;
 
 class OpenFile {
   static const MethodChannel _channel = const MethodChannel('open_file');
@@ -14,7 +13,7 @@ class OpenFile {
       {String? type, String? uti, String linuxDesktopName = "xdg"}) async {
     if (!Platform.isIOS && !Platform.isAndroid) {
       int _result;
-      if (Platform.isMacOS) {
+      if (Platform.isMacOS || Platform.isWindows) {
         final process = await Process.start("open", [filePath]);
         _result = await process.exitCode;
       } else if (Platform.isLinux) {
@@ -22,7 +21,7 @@ class OpenFile {
             await Process.start("$linuxDesktopName-open", [filePath]);
         _result = await process.exitCode;
       } else {
-        _result = windows.shellExecute('open', filePath);
+        throw UnsupportedError("Unsupported platform");
       }
       return OpenResult(
           type: _result == 0 ? ResultType.done : ResultType.error,
