@@ -30,7 +30,7 @@ class OpenFilex {
         var filePathLinux = Uri.file(filePath!);
         if (linuxByProcess) {
           result =
-              Process.runSync('xdg-open', [filePathLinux.toString()]).exitCode;
+              (await Process.run('xdg-open', [filePathLinux.toString()])).exitCode;
         } else {
           result = linux
               .system(['$linuxDesktopName-open', filePathLinux.toString()]);
