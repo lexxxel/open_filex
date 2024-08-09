@@ -13,12 +13,14 @@ class OpenFile {
       {String? type, String? uti, String linuxDesktopName = "xdg"}) async {
     if (!Platform.isIOS && !Platform.isAndroid) {
       int _result;
-      if (Platform.isMacOS || Platform.isWindows) {
+      if (Platform.isMacOS) {
         final process = await Process.start("open", [filePath]);
         _result = await process.exitCode;
       } else if (Platform.isLinux) {
-        final process =
-            await Process.start("$linuxDesktopName-open", [filePath]);
+        final process = await Process.start("$linuxDesktopName-open", [filePath]);
+        _result = await process.exitCode;
+      } else if (Platform.isWindows) {
+        final process = await Process.start("cmd.exe", ["/c", "start", filePath]);
         _result = await process.exitCode;
       } else {
         throw UnsupportedError("Unsupported platform");
